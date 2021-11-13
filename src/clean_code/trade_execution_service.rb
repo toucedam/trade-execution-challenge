@@ -1,3 +1,8 @@
+require "httparty"
+require "redis"
+require "money"
+require "monetize"
+
 #
 # This service provides an interface for order routing AND trade execution  
 # using different avaiable Liquidity Providers (aka "LPs") using two different
@@ -16,9 +21,11 @@ class TradeExecutionService
   LIQUIDITY_PROVIDER_A = "lpA"
   LIQUIDITY_PROVIDER_B = "lpB"
   LIQUIDITY_PROVIDER_C = "lpC"
-    
+
+  USD = "USD"
+
   def initialize
-    @connection = Redis.new(url: 'my_redis_host_url')
+    @connection = Redis.new()
   end
 
   def execute_order(side, size, currency, counter_currency, date, price, order_id)
@@ -121,5 +128,6 @@ class TradeExecutionService
 
   def amount_in_usd(size, currency)
     # it would return a Money object representing a USD amount
+    return currency.to_money(USD)
   end
 end
