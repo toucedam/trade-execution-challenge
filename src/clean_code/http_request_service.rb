@@ -5,7 +5,7 @@ class HttpRequestService
   
     def post(url, payload)
         json_payload = JSON.dump(payload)
-        self.class.post('http://lp_c_host/trade', body: json_payload).response
+        self.class.post(url, body: json_payload).response
     end
 
     def is_successful_response(response)
