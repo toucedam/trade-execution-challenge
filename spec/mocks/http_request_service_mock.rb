@@ -1,5 +1,3 @@
-require "httparty"
-
 class HttpRequestServiceMock
     include HTTParty
   
