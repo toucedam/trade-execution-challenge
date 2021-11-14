@@ -1,5 +1,5 @@
-require "./src/clean_code/utilities/http_request_service.rb"
-require "./spec/mocks/response_mock.rb"
+require_relative "../src/clean_code/utilities/http_request_service.rb"
+require_relative "./mocks/response_mock.rb"
 
 RSpec.describe HttpRequestService do
     context "Checking response status" do

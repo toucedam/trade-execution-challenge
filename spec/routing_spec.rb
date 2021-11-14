@@ -1,11 +1,11 @@
-require "./src/clean_code/trade_execution/liquidity_provider/liquidity_provider_factory.rb"
-require "./src/clean_code/trade_execution/liquidity_provider/liquidity_provider_a.rb"
-require "./src/clean_code/trade_execution/liquidity_provider/liquidity_provider_b.rb"
-require "./src/clean_code/trade_execution/liquidity_provider/liquidity_provider_c.rb"
-require "./spec/mocks/http_request_service_mock.rb"
-require "./spec/mocks/redis_queue_service_mock.rb"
-require "./spec/mocks/config_service_mock.rb"
-require "./spec/mocks/currency_service_mock.rb"
+require_relative "../src/clean_code/trade_execution/liquidity_provider/liquidity_provider_factory.rb"
+require_relative "../src/clean_code/trade_execution/liquidity_provider/liquidity_provider_a.rb"
+require_relative "../src/clean_code/trade_execution/liquidity_provider/liquidity_provider_b.rb"
+require_relative "../src/clean_code/trade_execution/liquidity_provider/liquidity_provider_c.rb"
+require_relative "./mocks/http_request_service_mock.rb"
+require_relative "./mocks/redis_queue_service_mock.rb"
+require_relative "./mocks/config_service_mock.rb"
+require_relative "./mocks/currency_service_mock.rb"
 
 RSpec.describe LiquidityProviderFactory, "#routing" do
     context "Less than 10k USD" do

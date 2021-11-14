@@ -1,5 +1,5 @@
-require "./src/clean_code/trade_execution/liquidity_provider/liquidity_provider_b.rb"
-require "./spec/mocks/redis_queue_service_mock.rb"
+require_relative "../src/clean_code/trade_execution/liquidity_provider/liquidity_provider_b.rb"
+require_relative "./mocks/redis_queue_service_mock.rb"
 
 RSpec.describe LiquidityProviderB, "#market trade" do
     context "Issuig market trade" do

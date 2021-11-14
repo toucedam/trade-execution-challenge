@@ -1,4 +1,4 @@
-require "./src/clean_code/trade_execution/liquidity_provider/fix_liquidity_provider_base.rb"
+require_relative "fix_liquidity_provider_base.rb"
 
 class LiquidityProviderB < FixLiquidityProviderBase
     def initialize(queueService)
