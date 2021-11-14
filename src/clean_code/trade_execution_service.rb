@@ -14,32 +14,43 @@ require "monetize"
 #   '11/12/2018', '1.1345', 'X-A213FFL'
 #   )
 #
+I18n.config.available_locales = :en
+Money.locale_backend = :i18n
+Money.rounding_mode = BigDecimal::ROUND_CEILING
 
 class TradeExecutionService
   include HTTParty
-  
-  LIQUIDITY_PROVIDER_A = "lpA"
-  LIQUIDITY_PROVIDER_B = "lpB"
-  LIQUIDITY_PROVIDER_C = "lpC"
 
   USD = "USD"
 
+  attr_accessor :lp
+
   def initialize
     @connection = Redis.new()
+  end
+
+  def LIQUIDITY_PROVIDER_A
+    "lpA"
+  end
+  def LIQUIDITY_PROVIDER_B
+    "lpB"
+  end
+  def LIQUIDITY_PROVIDER_C
+    "lpC"
   end
 
   def execute_order(side, size, currency, counter_currency, date, price, order_id)
     amount = amount_in_usd(size, currency)
 
     if amount < 10_000.to_money(USD) 
-      lp = LIQUIDITY_PROVIDER_C
+      self.lp = self.LIQUIDITY_PROVIDER_C
     elsif (amount >= 10_000.to_money(USD) && amount < 100_000.to_money(USD))
-      lp = LIQUIDITY_PROVIDER_B
+      self.lp = self.LIQUIDITY_PROVIDER_B
     else
-      lp = LIQUIDITY_PROVIDER_A
+      self.lp = self.LIQUIDITY_PROVIDER_A
     end
 
-    if lp == LIQUIDITY_PROVIDER_C
+    if self.lp == self.LIQUIDITY_PROVIDER_C
       issue_rest_market_trade(side, size, currency, counter_currency, date, price, order_id)
     else
       issue_fix_market_trade(side, size, currency, counter_currency, date, price, order_id, lp)
@@ -61,19 +72,19 @@ class TradeExecutionService
       value_date: date, 
       price: price
     }
-    json_payload = JSON.dump(payload)
-    response = self.class.post('http://lp_c_host/trade', body: json_payload).response
-    if response.code.to_i == 200
-      handle_rest_trade_confirmation(response)
-    else
-      raise 'REST order execution failed.'
-    end
+    # json_payload = JSON.dump(payload)
+    # response = self.class.post('http://lp_c_host/trade', body: json_payload).response
+    # if response.code.to_i == 200
+    #   handle_rest_trade_confirmation(response)
+    # else
+    #   raise 'REST order execution failed.'
+    # end
   end
 
   # FIX is a protocol used to execute market orders against a Liquidity Provider
   def issue_fix_market_trade(side, size, currency, counter_currency, date, price, order_id, lp)
     check_fix_service_status(lp)
-    if lp == LIQUIDITY_PROVIDER_A
+    if lp == self.LIQUIDITY_PROVIDER_A
       send_to_redis(
         :lp_acme_provider_queue, 
         'fix:order:execute',
@@ -105,8 +116,8 @@ class TradeExecutionService
   end
 
   def send_to_redis(queue, command, payload = nil)
-    redis_msg = payload == nil ? command : "#{command}::#{JSON.dump(payload)}" 
-    @connection.rpush queue, redis_msg
+    #redis_msg = payload == nil ? command : "#{command}::#{JSON.dump(payload)}" 
+    #@connection.rpush queue, redis_msg
   end
 
   def handle_rest_trade_confirmation(rest_trade_confirmation)
@@ -128,6 +139,6 @@ class TradeExecutionService
 
   def amount_in_usd(size, currency)
     # it would return a Money object representing a USD amount
-    return currency.to_money(USD)
+    size.to_money(currency).to_money(USD)
   end
 end
