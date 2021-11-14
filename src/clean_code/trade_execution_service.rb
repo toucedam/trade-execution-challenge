@@ -1,4 +1,3 @@
-require "redis"
 require "money"
 require "monetize"
 
@@ -23,9 +22,9 @@ class TradeExecutionService
 
   attr_accessor :lp
 
-  def initialize(httpRequestService)
-    @connection = Redis.new()
+  def initialize(httpRequestService, queueService)
     @httpRequestService = httpRequestService
+    @queueService = queueService
   end
 
   def LIQUIDITY_PROVIDER_A
@@ -85,7 +84,7 @@ class TradeExecutionService
   def issue_fix_market_trade(side, size, currency, counter_currency, date, price, order_id, lp)
     check_fix_service_status(lp)
     if lp == self.LIQUIDITY_PROVIDER_A
-      send_to_redis(
+      @queueService.push_to_queue(
         :lp_acme_provider_queue, 
         'fix:order:execute',
         clOrdID: order_id, 
@@ -97,7 +96,7 @@ class TradeExecutionService
         price: price
       )
     else 
-      send_to_redis(
+      @queueService.push_to_queue(
         :lp_wall_street_provider_queue, 
         'fix:executetrade',
         ordType: 'D',
@@ -113,11 +112,6 @@ class TradeExecutionService
 
     response = wait_for_fix_response(order_id, lp)
     handle_fix_trade_confirmation(response)
-  end
-
-  def send_to_redis(queue, command, payload = nil)
-    #redis_msg = payload == nil ? command : "#{command}::#{JSON.dump(payload)}" 
-    #@connection.rpush queue, redis_msg
   end
 
   def handle_rest_trade_confirmation(rest_trade_confirmation)
