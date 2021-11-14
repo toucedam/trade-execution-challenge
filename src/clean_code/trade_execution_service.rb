@@ -1,4 +1,3 @@
-require "httparty"
 require "redis"
 require "money"
 require "monetize"
@@ -19,14 +18,14 @@ Money.locale_backend = :i18n
 Money.rounding_mode = BigDecimal::ROUND_CEILING
 
 class TradeExecutionService
-  include HTTParty
 
   USD = "USD"
 
   attr_accessor :lp
 
-  def initialize
+  def initialize(httpRequestService)
     @connection = Redis.new()
+    @httpRequestService = httpRequestService
   end
 
   def LIQUIDITY_PROVIDER_A
@@ -72,13 +71,14 @@ class TradeExecutionService
       value_date: date, 
       price: price
     }
-    # json_payload = JSON.dump(payload)
-    # response = self.class.post('http://lp_c_host/trade', body: json_payload).response
-    # if response.code.to_i == 200
-    #   handle_rest_trade_confirmation(response)
-    # else
-    #   raise 'REST order execution failed.'
-    # end
+
+    response = @httpRequestService.post('http://lp_c_host/trade', payload)
+
+    if @httpRequestService.is_successful_response(response)
+      handle_rest_trade_confirmation(response)
+    else
+      raise 'REST order execution failed.'
+    end
   end
 
   # FIX is a protocol used to execute market orders against a Liquidity Provider
