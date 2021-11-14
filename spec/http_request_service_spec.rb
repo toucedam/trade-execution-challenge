@@ -1,4 +1,4 @@
-require "./src/clean_code/http_request_service.rb"
+require "./src/clean_code/utilities/http_request_service.rb"
 require "./spec/mocks/response_mock.rb"
 
 RSpec.describe HttpRequestService do

@@ -1,4 +1,4 @@
-require "./src/clean_code/trade_execution_service.rb"
+require "./src/clean_code/trade_execution/trade_execution_service.rb"
 require "./spec/mocks/http_request_service_mock.rb"
 require "./spec/mocks/redis_queue_service_mock.rb"
 require "./spec/mocks/config_service_mock.rb"
