@@ -11,8 +11,9 @@
 #
 
 class TradeExecutionService
-  def initialize(liquidityProviderFactory)
+  def initialize(liquidityProviderFactory, logService)
     @liquidityProviderFactory = liquidityProviderFactory
+    @logService = logService
   end
 
   def execute_order(side, size, currency, counter_currency, date, price, order_id)
@@ -20,8 +21,6 @@ class TradeExecutionService
 
     liquidity_provider.issue_market_trade(side, size, currency, counter_currency, date, price, order_id)
   rescue
-    File.open('path_to_log_file/errors.log', 'a') do |f|
-      f.puts "Execution of #{order_id} failed."
-    end
+    @logService.log_error("Execution of #{order_id} failed.")
   end
 end
