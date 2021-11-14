@@ -6,6 +6,10 @@ class RedisQueueServiceMock
         @queue
     end
 
+    def command
+        @command
+    end
+
     def redis_msg
         @redis_msg
     end
@@ -14,6 +18,7 @@ class RedisQueueServiceMock
         redis_msg = payload == nil ? command : "#{command}::#{JSON.dump(payload)}" 
         
         @queue = queue
+        @command = command
         @redis_msg = redis_msg
     end
 end
