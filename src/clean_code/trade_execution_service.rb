@@ -22,9 +22,10 @@ class TradeExecutionService
 
   attr_accessor :lp
 
-  def initialize(httpRequestService, queueService)
+  def initialize(httpRequestService, queueService, configService)
     @httpRequestService = httpRequestService
     @queueService = queueService
+    @configService = configService
   end
 
   def LIQUIDITY_PROVIDER_A
@@ -71,7 +72,8 @@ class TradeExecutionService
       price: price
     }
 
-    response = @httpRequestService.post('http://lp_c_host/trade', payload)
+    lpUrl = @configService.liquidity_provider_base_url + '/trade'
+    response = @httpRequestService.post(lpUrl, payload)
 
     if @httpRequestService.is_successful_response(response)
       handle_rest_trade_confirmation(response)

@@ -1,8 +1,8 @@
 require "redis"
 
 class RedisQueueService
-  def initialize
-    @connection = Redis.new(url: 'my_redis_host_url')
+  def initialize(configService)
+    @connection = Redis.new(url: configService.redis_url)
   end
 
   def push_to_queue(queue, command, payload = nil)
