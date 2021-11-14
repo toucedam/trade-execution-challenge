@@ -6,7 +6,7 @@ class LiquidityProviderB < FixLiquidityProviderBase
       end
 
     def issue_market_trade(side, size, currency, counter_currency, date, price, order_id)
-        check_fix_service_status()
+        check_service_status()
         
         @queueService.push_to_queue(
             :lp_acme_provider_queue, 

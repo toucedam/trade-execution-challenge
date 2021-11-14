@@ -3,6 +3,9 @@ class FixLiquidityProviderBase
         @queueService = queueService
     end
 
+    def check_service_status()
+    end
+    
     def wait_for_response(order_id)
       # blocking read waiting for a redis key where trade confirmation is stored
     end
